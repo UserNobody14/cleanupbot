@@ -41,6 +41,8 @@ export function Upload(): JSX.Element {
         return;
       }
 
+      setSelectedFiles(files);
+
       setUploadStatus("uploading");
 
       const formData = new FormData();
@@ -129,11 +131,12 @@ export function Upload(): JSX.Element {
           </Card>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
             {selectedFiles.map((file, index) => (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 key={index}
                 src={URL.createObjectURL(file)}
-                width={500}
-                height={500}
+                width={1000}
+                height={1000}
                 alt={`Uploaded Image ${index + 1}`}
                 className="aspect-square w-full rounded-md object-cover"
               />
@@ -143,9 +146,7 @@ export function Upload(): JSX.Element {
             <Button
               className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               onClick={analyzeImage}
-              disabled={
-               fileReference === null
-              }
+              disabled={fileReference === null}
             >
               {uploadStatus === "uploading" ? "Uploading..." : "Analyze Image"}
             </Button>
