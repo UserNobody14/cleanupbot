@@ -3,7 +3,7 @@
 import React, { useState, ChangeEvent, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckIcon, UploadIcon, FishIcon } from "lucide-react";
+import { CheckIcon, UploadIcon, TrashIcon } from "lucide-react";
 
 type UploadStatus = "idle" | "uploading" | "success" | "error" | "analyzing";
 
@@ -130,7 +130,7 @@ export function Upload(): JSX.Element {
               </div>
             </CardContent>
           </Card>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <div className="flex justify-center">
             {selectedFiles.map((file, index) => (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -143,7 +143,7 @@ export function Upload(): JSX.Element {
               />
             ))}
           </div>
-          <div className="mt-6">
+          <div className="mt-6 flex justify-center">
             <Button
               className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               onClick={analyzeImage}
@@ -158,16 +158,16 @@ export function Upload(): JSX.Element {
                 {analysisResult !== null &&
                 analysisResult.is_dirty === false ? (
                   <>
-                    <CheckIcon className="h-6 w-6" color="green" />
-                    <p className="text-sm font-medium text-foreground">
+                    <CheckIcon className="h-8 w-8" color="green" />
+                    <p className="text-xl font-medium text-foreground">
                       Image is clean
                     </p>
                   </>
                 ) : analysisResult !== null &&
                   analysisResult.is_dirty === true ? (
                   <>
-                    <FishIcon className="h-6 w-6" color="red" />
-                    <p className="text-sm font-medium text-foreground">
+                    <TrashIcon className="h-8 w-8" color="red" />
+                    <p className="text-xl font-medium text-foreground">
                       Image is dirty
                     </p>
                   </>
