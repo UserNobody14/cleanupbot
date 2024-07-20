@@ -36,13 +36,18 @@ export function Upload(): JSX.Element {
         alert("Please select at least one file to upload.");
         return;
       }
+      if (files.length > 1) {
+        alert("Only one file can be uploaded at a time.");
+        return;
+      }
 
       setUploadStatus("uploading");
 
       const formData = new FormData();
-      selectedFiles.forEach((file, index) => {
-        formData.append(`file${index}`, file);
-      });
+      // selectedFiles.forEach((file, index) => {
+      //   formData.append(`file${index}`, file);
+      // });
+      formData.append("file", files[0]);
 
       try {
         const response = await fetch("http://localhost:8000/save_image", {
@@ -53,6 +58,7 @@ export function Upload(): JSX.Element {
 
         if (response.ok) {
           setFileReference(data);
+          setUploadStatus("idle");
         }
       } catch (error) {
         console.error("Upload failed:", error);
@@ -70,11 +76,6 @@ export function Upload(): JSX.Element {
       alert("Please upload at least one file to upload.");
       return;
     }
-    if (selectedFiles.length > 1) {
-      alert("Only one file can be uploaded at a time.");
-      return;
-    }
-
     setUploadStatus("analyzing");
 
     try {
@@ -82,6 +83,9 @@ export function Upload(): JSX.Element {
         "http://localhost:8000/question-whether-dirty/",
         {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({ ref: fileReference.ref }),
         }
       );
@@ -140,7 +144,7 @@ export function Upload(): JSX.Element {
               className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               onClick={analyzeImage}
               disabled={
-                uploadStatus === "uploading" || selectedFiles.length === 0
+               fileReference === null
               }
             >
               {uploadStatus === "uploading" ? "Uploading..." : "Analyze Image"}
