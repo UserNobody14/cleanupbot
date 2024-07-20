@@ -5,3 +5,9 @@ backend/__pycache__/*
 fron-end/node_modules/**
 fron-end/.next/**
 .env
+fron-end/node_modules/**
+fron-end/.next/*
+.env
+.venv/*
+venv/*
+backend/__pycache__/*
