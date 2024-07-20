@@ -149,7 +149,7 @@ export function Upload(): JSX.Element {
               onClick={analyzeImage}
               disabled={fileReference === null}
             >
-              {uploadStatus === "uploading" ? "Uploading..." : "Analyze Image"}
+              {uploadStatus === "analyzing" ? "analyzing..." : "Analyze Image"}
             </Button>
           </div>
           {uploadStatus === "success" && (
@@ -168,7 +168,7 @@ export function Upload(): JSX.Element {
                   <>
                     <FishIcon className="h-6 w-6" color="red" />
                     <p className="text-sm font-medium text-foreground">
-                      Image is clean
+                      Image is dirty
                     </p>
                   </>
                 ) : null}
