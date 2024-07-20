@@ -6,3 +6,4 @@ fron-end/.next/*
 .env
 .venv/*
 venv/*
+backend/__pycache__/*

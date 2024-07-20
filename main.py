@@ -9,6 +9,8 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import uuid
 
+from backend.worker import ask_whether_dirty
+
 app = FastAPI()
 
 origins = [
@@ -81,7 +83,9 @@ async def generate_video(img: ImageQuestionRequest):
         img_path = f"outdata/{img.ref}"
         if not os.path.exists(img_path):
             raise ValueError("Image not found")
-        return ImageQuestionResponse(answer="", is_dirty=False, imglink=img.ref)
+        img_path_abs = os.path.abspath(img_path)
+        imq = ask_whether_dirty(img_path_abs)
+        return ImageQuestionResponse(answer=imq.result, is_dirty=True, imglink=img.ref)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
