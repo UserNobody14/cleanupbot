@@ -1,3 +1,5 @@
 test.db
 outdata/*
 __pycache__/*
+
+.env
