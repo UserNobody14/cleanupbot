@@ -85,7 +85,9 @@ async def generate_video(img: ImageQuestionRequest):
             raise ValueError("Image not found")
         img_path_abs = os.path.abspath(img_path)
         imq = ask_whether_dirty(img_path_abs)
-        return ImageQuestionResponse(answer=imq.result, is_dirty=True, imglink=img.ref)
+        return ImageQuestionResponse(
+            answer=imq.result, is_dirty=imq.flag, imglink=img.ref
+        )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
