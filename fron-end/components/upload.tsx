@@ -23,16 +23,21 @@ export function Upload(): JSX.Element {
       alert("Please select at least one file to upload.");
       return;
     }
+    if (selectedFiles.length > 1) {
+      alert("Only one file can be uploaded at a time.");
+      return;
+    }
 
     setUploadStatus("uploading");
 
     const formData = new FormData();
-    selectedFiles.forEach((file, index) => {
-      formData.append(`file${index}`, file);
-    });
+    formData.append("file", selectedFiles[0]);
+    // selectedFiles.forEach((file, index) => {
+    //   formData.append(`file${index}`, file);
+    // });
 
     try {
-      const response = await fetch("/api/upload", {
+      const response = await fetch("http://localhost:8000/save_image/", {
         method: "POST",
         body: formData,
       });

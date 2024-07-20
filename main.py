@@ -87,4 +87,3 @@ async def generate_video(img: ImageQuestionRequest):
 
 
 app.mount("/outdata", StaticFiles(directory="./outdata", html=True), name="vids")
-app.mount("/", StaticFiles(directory="./frontend/dist", html=True), name="static")
