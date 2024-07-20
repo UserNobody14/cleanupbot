@@ -3,7 +3,7 @@
 import React, { useState, ChangeEvent, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckIcon, UploadIcon } from "lucide-react";
+import { CheckIcon, UploadIcon, FishIcon } from "lucide-react";
 
 type UploadStatus = "idle" | "uploading" | "success" | "error" | "analyzing";
 
@@ -95,6 +95,7 @@ export function Upload(): JSX.Element {
 
       if (response.ok) {
         setAnalysisResult(data);
+        setUploadStatus("success");
       }
     } catch (error) {
       console.error("Upload failed:", error);
@@ -151,23 +152,28 @@ export function Upload(): JSX.Element {
               {uploadStatus === "uploading" ? "Uploading..." : "Analyze Image"}
             </Button>
           </div>
-          {uploadStatus !== "idle" && (
+          {uploadStatus === "success" && (
             <div className="mt-6 flex items-center justify-center">
               <div className="flex items-center gap-2">
-                {uploadStatus === "success" ? (
+                {analysisResult !== null &&
+                analysisResult.is_dirty === false ? (
                   <>
-                    <CheckIcon className="h-6 w-6 text-green-500" />
+                    <CheckIcon className="h-6 w-6" color="green" />
                     <p className="text-sm font-medium text-foreground">
                       Image is clean
                     </p>
                   </>
-                ) : uploadStatus === "error" ? (
-                  <p className="text-sm font-medium text-red-500">
-                    Upload failed. Please try again.
-                  </p>
+                ) : analysisResult !== null &&
+                  analysisResult.is_dirty === true ? (
+                  <>
+                    <FishIcon className="h-6 w-6" color="red" />
+                    <p className="text-sm font-medium text-foreground">
+                      Image is clean
+                    </p>
+                  </>
                 ) : null}
                 {analysisResult !== null && (
-                  <p>{JSON.stringify(analysisResult)}</p>
+                  <p className="text-sm font-medium">{analysisResult.anwer}</p>
                 )}
               </div>
             </div>
