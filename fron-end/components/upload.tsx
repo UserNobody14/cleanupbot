@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckIcon, UploadIcon } from "lucide-react";
@@ -10,12 +10,17 @@ type UploadStatus = "idle" | "uploading" | "success" | "error";
 export function Upload(): JSX.Element {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploadStatus, setUploadStatus] = useState<UploadStatus>("idle");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
       setSelectedFiles(files);
     }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
   };
 
   const handleUpload = async () => {
@@ -32,15 +37,14 @@ export function Upload(): JSX.Element {
     });
 
     try {
-      const response = await fetch("/api/upload", {
+      const response = await fetch("http://localhost:8000/save_image", {
         method: "POST",
         body: formData,
       });
 
       if (response.ok) {
-        setUploadStatus("success");
-      } else {
-        setUploadStatus("error");
+        console.log("Upload successful");
+        console.log(response);
       }
     } catch (error) {
       console.error("Upload failed:", error);
@@ -69,18 +73,9 @@ export function Upload(): JSX.Element {
                   className="hidden"
                   onChange={handleFileChange}
                   accept="image/*"
+                  ref={fileInputRef}
                 />
-                <Button
-                  onClick={() => {
-                    const fileInput =
-                      document.querySelector('input[type="file"]');
-                    if (fileInput) {
-                      fileInput.click();
-                    }
-                  }}
-                >
-                  Upload Images
-                </Button>
+                <Button onClick={handleUploadClick}>Upload Images</Button>
               </div>
             </CardContent>
           </Card>
