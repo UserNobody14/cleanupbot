@@ -5,17 +5,59 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckIcon, UploadIcon } from "lucide-react";
 
-type UploadStatus = "idle" | "uploading" | "success" | "error";
+type UploadStatus = "idle" | "uploading" | "success" | "error" | "analyzing";
+
+interface FileReference {
+  ref: string;
+}
+
+interface AnalysisResult {
+  anwer: string;
+  is_dirty: boolean;
+  imglink: string;
+}
 
 export function Upload(): JSX.Element {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploadStatus, setUploadStatus] = useState<UploadStatus>("idle");
+  const [fileReference, setFileReference] = useState<FileReference | null>(
+    null
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(
+    null
+  );
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
-      setSelectedFiles(files);
+
+      if (files.length === 0) {
+        alert("Please select at least one file to upload.");
+        return;
+      }
+
+      setUploadStatus("uploading");
+
+      const formData = new FormData();
+      selectedFiles.forEach((file, index) => {
+        formData.append(`file${index}`, file);
+      });
+
+      try {
+        const response = await fetch("http://localhost:8000/save_image", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          setFileReference(data);
+        }
+      } catch (error) {
+        console.error("Upload failed:", error);
+        setUploadStatus("error");
+      }
     }
   };
 
@@ -23,28 +65,26 @@ export function Upload(): JSX.Element {
     fileInputRef.current?.click();
   };
 
-  const handleUpload = async () => {
-    if (selectedFiles.length === 0) {
-      alert("Please select at least one file to upload.");
+  const analyzeImage = async () => {
+    if (fileReference === null) {
+      alert("Please upload at least one file to upload.");
       return;
     }
 
-    setUploadStatus("uploading");
-
-    const formData = new FormData();
-    selectedFiles.forEach((file, index) => {
-      formData.append(`file${index}`, file);
-    });
+    setUploadStatus("analyzing");
 
     try {
-      const response = await fetch("http://localhost:8000/save_image", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "http://localhost:8000/question-whether-dirty/",
+        {
+          method: "POST",
+          body: JSON.stringify({ ref: fileReference.ref }),
+        }
+      );
+      const data = await response.json();
 
       if (response.ok) {
-        console.log("Upload successful");
-        console.log(response);
+        setAnalysisResult(data);
       }
     } catch (error) {
       console.error("Upload failed:", error);
@@ -94,7 +134,7 @@ export function Upload(): JSX.Element {
           <div className="mt-6">
             <Button
               className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-              onClick={handleUpload}
+              onClick={analyzeImage}
               disabled={
                 uploadStatus === "uploading" || selectedFiles.length === 0
               }
@@ -117,6 +157,9 @@ export function Upload(): JSX.Element {
                     Upload failed. Please try again.
                   </p>
                 ) : null}
+                {analysisResult !== null && (
+                  <p>{JSON.stringify(analysisResult)}</p>
+                )}
               </div>
             </div>
           )}
