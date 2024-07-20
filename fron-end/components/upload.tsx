@@ -12,7 +12,7 @@ interface FileReference {
 }
 
 interface AnalysisResult {
-  anwer: string;
+  answer: string;
   is_dirty: boolean;
   imglink: string;
 }
@@ -173,7 +173,7 @@ export function Upload(): JSX.Element {
                   </>
                 ) : null}
                 {analysisResult !== null && (
-                  <p className="text-sm font-medium">{analysisResult.anwer}</p>
+                  <p className="text-sm font-medium">{analysisResult.answer}</p>
                 )}
               </div>
             </div>
