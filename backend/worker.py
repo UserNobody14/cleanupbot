@@ -76,9 +76,6 @@ class Worker:
         #return ImageResults(image=self.image_path, result=response.json())
         return ImageResults(image=self.image_path, result=response.json()["choices"][0]["message"]["content"])
 
-
-
-
 def ask_whether_dirty(image_path: str):
     worker = Worker(Path(image_path))
     user_prompt = "Is there a mess?"
